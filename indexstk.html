@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Storage Stok Takip Sistemi</title>
+    <link rel="icon" type="image/png" href="mis.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="stylestk.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scriptstk.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar col-12">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
+                    <div class="d-flex flex-column align-items-center pb-3 mb-md-0 me-md-auto">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+                            <img src="mis.png" alt="Stok Takip Logo" style="height: 40px; margin-right: 10px;" class="d-none d-sm-inline">
+                            <div class="d-none d-sm-flex flex-column">
+                                <span class="fs-5 fw-bold">Stok Takip</span>
+                                <small style="font-size: 0.8rem;">mistechnology ürünüdür</small>
+                            </div>
+                        </a>
+                    </div>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link active" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="products">
+                                <i class="fas fa-box"></i> <span class="ms-1 d-none d-sm-inline">Ürünler</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="sales">
+                                <i class="fas fa-shopping-cart"></i> <span class="ms-1 d-none d-sm-inline">Satışlar</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="barcode">
+                                <i class="fas fa-barcode"></i> <span class="ms-1 d-none d-sm-inline">Barkod İşlemleri</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="warehouse-map">
+                                <i class="fas fa-map-marker-alt"></i> <span class="ms-1 d-none d-sm-inline">Depo Haritası</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="reports">
+                                <i class="fas fa-chart-bar"></i> <span class="ms-1 d-none d-sm-inline">Raporlar</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="settings">
+                                <i class="fas fa-cog"></i> <span class="ms-1 d-none d-sm-inline">Ayarlar</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content col-12">
+                <!-- Header -->
+                <div class="header">
+                    <h2 id="page-title">Stok Takip Dashboard</h2>
+                    <div class="search-container">
+                        <input type="text" class="form-control" id="global-search" placeholder="Barkod, ürün adı veya açıklama ile ara...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="user-info d-flex align-items-center">
+                        <div class="me-3" id="current-date">
+                            <!-- Date will be populated by JS -->
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--primary-color);">
+                                <div id="userAvatar" class="avatar me-2"></div>
+                                <span id="currentUserDisplay"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section active">
+                    <!-- Advanced Search -->
+                    <div class="advanced-search">
+                        <h5><i class="fas fa-filter"></i> Gelişmiş Arama</h5>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Kategori</label>
+                                <select class="form-select" id="category-filter">
+                                    <option value="">Tüm Kategoriler</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Stok Durumu</label>
+                                <select class="form-select" id="stock-filter">
+                                    <option value="">Tümü</option>
+                                    <option value="low">Düşük Stok</option>
+                                    <option value="medium">Orta Stok</option>
+                                    <option value="high">Yüksek Stok</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Tedarikçi</label>
+                                <select class="form-select" id="supplier-filter">
+                                    <option value="">Tüm Tedarikçiler</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Fiyat Aralığı</label>
+                                <select class="form-select" id="price-filter">
+                                    <option value="">Tüm Fiyatlar</option>
+                                    <option value="0-100">0-100 TL</option>
+                                    <option value="100-500">100-500 TL</option>
+                                    <option value="500-1000">500-1000 TL</option>
+                                    <option value="1000+">1000+ TL</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i> Ara</button>
+                            <button class="btn btn-outline-secondary" id="reset-btn"><i class="fas fa-redo"></i> Sıfırla</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="row" id="stats-cards">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Products Table -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-list"></i> Son Eklenen Ürünler</h5>
+                            <button class="btn btn-primary btn-sm" id="add-product-btn"><i class="fas fa-plus"></i> Yeni Ürün Ekle</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Görsel</th>
+                                            <th>Barkod</th>
+                                            <th>Ürün Adı</th>
+                                            <th>Kategori</th>
+                                            <th>Stok</th>
+                                            <th>Fiyat</th>
+                                            <th>Konum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="products-table-body">
+                                        <!-- Products will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-products" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <h4>Henüz ürün eklenmemiş</h4>
+                                <p>İlk ürününüzü eklemek için "Yeni Ürün Ekle" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Warehouse Map Preview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Depo Haritası - Önizleme</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="map-container">
+                                <div class="warehouse-grid" id="warehouse-preview">
+                                    <!-- Warehouse grid will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Section -->
+                <div id="products" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-box"></i> Tüm Ürünler</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="export-products-btn"><i class="fas fa-file-export"></i> Dışa Aktar</button>
+                                <button class="btn btn-success btn-sm" id="add-new-product-btn"><i class="fas fa-plus"></i> Yeni Ürün Ekle</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Görsel</th>
+                                            <th>Barkod</th>
+                                            <th>Ürün Adı</th>
+                                            <th>Kategori</th>
+                                            <th>Stok</th>
+                                            <th>Fiyat</th>
+                                            <th>Konum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="all-products-table-body">
+                                        <!-- All products will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-all-products" class="empty-state">
+                                <i class="fas fa-box-open"></i>
+                                <h4>Henüz ürün eklenmemiş</h4>
+                                <p>İlk ürününüzü eklemek için "Yeni Ürün Ekle" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sales Section -->
+                <div id="sales" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-shopping-cart"></i> Satış İşlemleri</h5>
+                            <button class="btn btn-success btn-sm" id="new-sale-btn"><i class="fas fa-cash-register"></i> Yeni Satış</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Satış Sepeti</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="sale-cart">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                    <h4>Sepet Boş</h4>
+                                                    <p>Satış yapmak için ürün ekleyin</p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <div class="d-flex justify-content-between">
+                                                    <strong>Toplam: </strong>
+                                                    <strong id="sale-total">0.00 TL</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Ürün Ekle</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Ürün Ara</label>
+                                                <input type="text" class="form-control" id="sale-product-search" placeholder="Ürün adı veya barkod">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Ürün</label>
+                                                <select class="form-select" id="sale-product-select">
+                                                    <option value="">Ürün seçin</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Miktar</label>
+                                                <input type="number" class="form-control" id="sale-quantity" value="1" min="1">
+                                            </div>
+                                            <button class="btn btn-primary w-100" id="add-to-cart-btn">
+                                                <i class="fas fa-cart-plus"></i> Sepete Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <button class="btn btn-success w-100 mb-2" id="complete-sale-btn">
+                                                <i class="fas fa-check"></i> Satışı Tamamla
+                                            </button>
+                                            <button class="btn btn-outline-secondary w-100" id="clear-cart-btn">
+                                                <i class="fas fa-trash"></i> Sepeti Temizle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sales History -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-history"></i> Satış Geçmişi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Satış No</th>
+                                            <th>Tarih</th>
+                                            <th>Ürün Sayısı</th>
+                                            <th>Toplam Tutar</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sales-history-table">
+                                        <!-- Sales history will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-sales" class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <h4>Henüz satış yapılmamış</h4>
+                                <p>İlk satışınızı yapmak için "Yeni Satış" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Barcode Section -->
+                <div id="barcode" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-barcode"></i> Barkod İşlemleri</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="barcode-scanner">
+                                        <div class="text-center">
+                                            <i class="fas fa-camera fa-3x mb-3"></i>
+                                            <p>Barkod tarayıcıyı etkinleştirmek için tıklayın</p>
+                                            <button class="btn btn-light" id="enable-camera-btn">Kamera Aç</button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <label class="form-label">Barkod Numarası</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="barcode-input" placeholder="Barkod numarasını girin veya taratın">
+                                            <button class="btn btn-outline-secondary" type="button" id="generate-barcode-btn">Oluştur</button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-primary w-100" id="search-by-barcode-btn"><i class="fas fa-search"></i> Barkod ile Ara</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6>Barkod Görüntüsü</h6>
+                                        </div>
+                                        <div class="card-body text-center">
+                                            <canvas id="barcode-canvas" width="300" height="150"></canvas>
+                                            <div class="mt-3">
+                                                <button class="btn btn-outline-primary" id="print-barcode-btn"><i class="fas fa-print"></i> Yazdır</button>
+                                                <button class="btn btn-outline-success" id="download-barcode-btn"><i class="fas fa-download"></i> İndir</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card mt-3">
+                                        <div class="card-header">
+                                            <h6>Barkod Geçmişi</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-group" id="barcode-history">
+                                                <!-- Barcode history will be populated by JavaScript -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Warehouse Map Section -->
+                <div id="warehouse-map" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-map-marker-alt"></i> Depo Haritası</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="refresh-map-btn"><i class="fas fa-sync-alt"></i> Yenile</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="map-search" placeholder="Raf konumu ara...">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="map-category-filter">
+                                        <option value="">Tüm Kategoriler</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="map-stock-filter">
+                                        <option value="">Tüm Stok Durumları</option>
+                                        <option value="low">Düşük Stok</option>
+                                        <option value="normal">Normal Stok</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="map-container">
+                                <div class="warehouse-grid" id="warehouse-full-map">
+                                    <!-- Full warehouse grid will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="d-flex">
+                                    <div class="me-3"><span class="badge bg-secondary">Boş</span></div>
+                                    <div class="me-3"><span class="badge bg-primary">Dolu</span></div>
+                                    <div class="me-3"><span class="badge bg-danger">Düşük Stok</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Section -->
+                <div id="reports" class="section">
+                    <!-- Report Controls -->
+                    <div class="report-controls">
+                        <h5><i class="fas fa-cog"></i> Rapor Ayarları</h5>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Rapor Türü</label>
+                                <select class="form-select" id="report-type">
+                                    <option value="stock">Stok Raporu</option>
+                                    <option value="sales">Satış Raporu</option>
+                                    <option value="category">Kategori Raporu</option>
+                                    <option value="low-stock">Düşük Stok Raporu</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="report-start-date">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="report-end-date">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Format</label>
+                                <select class="form-select" id="report-format">
+                                    <option value="html">HTML</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" id="generate-report-btn"><i class="fas fa-chart-pie"></i> Rapor Oluştur</button>
+                            <button class="btn btn-success" id="export-report-btn"><i class="fas fa-download"></i> Raporu İndir</button>
+                            <button class="btn btn-outline-info" id="print-report-btn"><i class="fas fa-print"></i> Yazdır</button>
+                        </div>
+                    </div>
+
+                    <!-- Generated Report -->
+                    <div class="card" id="generated-report-container" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Oluşturulan Rapor</h5>
+                            <span class="badge bg-primary" id="report-date-range"></span>
+                        </div>
+                        <div class="card-body">
+                            <div id="generated-report-content">
+                                <!-- Report content will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Reports -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Stok Dağılımı</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="stockChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Kategori Bazlı Stok Değeri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="categoryChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Aylık Stok Hareketleri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="monthlyChart" height="100"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Düşük Stok Uyarıları</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ürün Adı</th>
+                                                    <th>Mevcut Stok</th>
+                                                    <th>Minimum Stok</th>
+                                                    <th>Eksik Miktar</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="low-stock-table">
+                                                <!-- Low stock items will be populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="empty-low-stock" class="empty-state">
+                                        <i class="fas fa-check-circle"></i>
+                                        <h4>Düşük stok uyarısı yok</h4>
+                                        <p>Tüm ürünler yeterli stok seviyesinde.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>En Değerli Stoklar</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Ürün Adı</th>
+                                                    <th>Stok Miktarı</th>
+                                                    <th>Birim Fiyat</th>
+                                                    <th>Toplam Değer</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="top-value-table">
+                                                <!-- Top value products will be populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="empty-top-value" class="empty-state">
+                                        <i class="fas fa-box-open"></i>
+                                        <h4>Henüz ürün eklenmemiş</h4>
+                                        <p>Stok değeri hesaplanacak ürün bulunamadı.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="settings" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-cog"></i> Sistem Ayarları</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6>Genel Ayarlar</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Şirket Adı</label>
+                                                <input type="text" class="form-control" id="company-name" value="ABC Stok Yönetimi">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Para Birimi</label>
+                                                <select class="form-select" id="currency">
+                                                    <option>TL - Türk Lirası</option>
+                                                    <option>USD - Amerikan Doları</option>
+                                                    <option>EUR - Euro</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Varsayılan Depo</label>
+                                                <select class="form-select" id="default-warehouse">
+                                                    <option>Merkez Depo</option>
+                                                    <option>Şube A Depo</option>
+                                                    <option>Şube B Depo</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="lowStockNotification" checked>
+                                                <label class="form-check-label" for="lowStockNotification">Düşük stok uyarıları gönder</label>
+                                            </div>
+                                            <button class="btn btn-primary" id="save-general-settings">Kaydet</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6>Stok Ayarları</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Varsayılan Stok Uyarı Limiti</label>
+                                                <input type="number" class="form-control" id="low-stock-limit" value="10">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Otomatik Stok Sayımı</label>
+                                                <select class="form-select" id="auto-stock-count">
+                                                    <option>Kapalı</option>
+                                                    <option>Haftalık</option>
+                                                    <option>Aylık</option>
+                                                    <option>Üç Aylık</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3 form-check">
+                                                <input type="checkbox" class="form-check-input" id="autoReorder" checked>
+                                                <label class="form-check-label" for="autoReorder">Otomatik sipariş oluştur</label>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Rapor Otomasyonu</label>
+                                                <select class="form-select" id="report-automation">
+                                                    <option>Kapalı</option>
+                                                    <option>Günlük</option>
+                                                    <option>Haftalık</option>
+                                                    <option>Aylık</option>
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-primary" id="save-stock-settings">Kaydet</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6>Veri Yönetimi</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Veri Yedekleme</label>
+                                                <div>
+                                                    <button class="btn btn-outline-primary me-2" id="backup-data-btn"><i class="fas fa-download"></i> Yedek Al</button>
+                                                    <button class="btn btn-outline-secondary" id="restore-data-btn"><i class="fas fa-upload"></i> Yedekten Yükle</button>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Veri Temizleme</label>
+                                                <div>
+                                                    <button class="btn btn-outline-danger me-2" id="clear-temp-btn"><i class="fas fa-trash"></i> Geçici Dosyaları Temizle</button>
+                                                    <button class="btn btn-outline-warning" id="clear-cache-btn"><i class="fas fa-eraser"></i> Önbelleği Temizle</button>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Sistem Bilgileri</label>
+                                                <div class="bg-light p-2 rounded" id="system-info">
+                                                    <!-- System info will be populated by JavaScript -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6>Veritabanı İşlemleri</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <p>Bu işlemler local storage'daki tüm verileri silecektir. Geri alınamaz!</p>
+                                                <button class="btn btn-danger w-100" id="reset-all-data-btn"><i class="fas fa-exclamation-triangle"></i> Tüm Verileri Sıfırla</button>
+                                            </div>
+                                            <div class="mb-3">
+                                                <p>Örnek verilerle sistemi test edin:</p>
+                                                <button class="btn btn-outline-info w-100" id="load-sample-data-btn"><i class="fas fa-vial"></i> Örnek Verileri Yükle</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="product-modal-title">Yeni Ürün Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form">
+                        <input type="hidden" id="product-id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Ürün Adı *</label>
+                                    <input type="text" class="form-control" id="product-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Barkod Numarası</label>
+                                    <input type="text" class="form-control" id="product-barcode">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Kategori</label>
+                                    <select class="form-select" id="product-category">
+                                        <option value="">Kategori Seçin</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Stok Miktarı *</label>
+                                    <input type="number" class="form-control" id="product-stock" value="0" min="0" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Minimum Stok</label>
+                                    <input type="number" class="form-control" id="product-min-stock" value="5" min="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Alış Fiyatı (TL)</label>
+                                    <input type="number" class="form-control" id="product-cost" step="0.01" min="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Satış Fiyatı (TL) *</label>
+                                    <input type="number" class="form-control" id="product-price" step="0.01" min="0" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tedarikçi</label>
+                                    <input type="text" class="form-control" id="product-supplier">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Depo Konumu</label>
+                                    <input type="text" class="form-control" id="product-location" placeholder="Örn: A-12-4">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ürün Görseli URL</label>
+                                    <input type="text" class="form-control" id="product-image" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="product-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="save-product-btn">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sell Product Modal -->
+    <div class="modal fade" id="sellProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ürün Satışı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="sell-product-form">
+                        <input type="hidden" id="sell-product-id">
+                        <div class="mb-3">
+                            <label class="form-label">Ürün Adı</label>
+                            <input type="text" class="form-control" id="sell-product-name" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mevcut Stok</label>
+                            <input type="text" class="form-control" id="sell-current-stock" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Satış Miktarı *</label>
+                            <input type="number" class="form-control" id="sell-quantity" value="1" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Birim Fiyat (TL)</label>
+                            <input type="number" class="form-control" id="sell-unit-price" step="0.01" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Toplam Tutar (TL)</label>
+                            <input type="text" class="form-control" id="sell-total-price" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-success" id="confirm-sell-btn">Satış Yap</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="success-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="success-toast-body">
+                İşlem başarıyla tamamlandı.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+
+    <!-- ÇIKIŞ YÖNETİMİ SCRIPT'İ -->
+    <script>
+        // Sayfa yüklendiğinde kullanıcı bilgisini göster
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (currentUser) {
+                // Kullanıcı adını göster
+                const userDisplay = document.getElementById('currentUserDisplay');
+                if (userDisplay) {
+                    userDisplay.textContent = currentUser;
+                }
+                
+                // Avatar harfini güncelle
+                const userAvatar = document.getElementById('userAvatar');
+                if (userAvatar) {
+                    userAvatar.textContent = currentUser.charAt(0).toUpperCase();
+                }
+                
+                // Header'daki tarih alanını güncelle (kullanıcı bilgisi ekle)
+                const currentDateSpan = document.getElementById('current-date');
+                if (currentDateSpan) {
+                    const loginTime = sessionStorage.getItem('loginTime');
+                    const loginDate = loginTime ? new Date(loginTime) : new Date();
+                    currentDateSpan.innerHTML = `
+                        <small style="margin-right: 10px;">
+                            <i class="fas fa-user-circle"></i> ${currentUser}
+                        </small>
+                        <span>${loginDate.toLocaleDateString('tr-TR')}</span>
+                    `;
+                }
+            } else {
+                // Kullanıcı yoksa login sayfasına yönlendir
+                window.location.href = 'loginstk.html';
+            }
+        });
+
+        // Çıkış butonu
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                // Oturum bilgilerini temizle
+                sessionStorage.removeItem('sessionActive');
+                sessionStorage.removeItem('currentUser');
+                sessionStorage.removeItem('loginTime');
+                
+                // Eğer "Beni Hatırla" seçiliyse localStorage'daki kullanıcıyı silme
+                // Eğer "Beni Hatırla" seçili değilse, login sırasında localStorage'a hiç kaydedilmez.
+                // Çıkışta sadece sessionStorage'ı temizlemek yeterlidir.
+                // İsteğe bağlı: Eğer "Beni Hatırla" seçeneği olsa bile çıkışta temizlenmesini isterseniz aşağıdaki satırı ekleyin
+                // localStorage.removeItem('loggedInUser');
+                
+                // Login sayfasına yönlendir
+                window.location.href = 'loginstk.html';
+            }
+        });
+
+        // Otomatik oturum zaman aşımı (30 dakika)
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('Oturumunuz zaman aşımına uğradı. Lütfen tekrar giriş yapın.');
+                sessionStorage.clear();
+                localStorage.removeItem('loggedInUser'); // Güvenlik için
+                window.location.href = 'loginstk.html';
+            }, 30 * 60 * 1000); // 30 dakika = 1800000 ms
+        }
+
+        // Kullanıcı aktivitelerini dinle
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        document.addEventListener('click', resetInactivityTimer);
+        document.addEventListener('scroll', resetInactivityTimer);
+        document.addEventListener('touchstart', resetInactivityTimer);
+
+        // Timer'ı başlat
+        resetInactivityTimer();
+
+    </script>
+</body>
+</html>
