@@ -1,0 +1,558 @@
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Container düzenlemeleri */
+.container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Sidebar düzenlemeleri */
+.sidebar {
+    background-color: var(--primary-color);
+    color: white;
+    min-height: 100vh;
+    padding-top: 20px;
+    overflow-y: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    width: 250px;
+    transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link {
+    color: var(--light-color);
+    padding: 12px 20px;
+    margin: 5px 0;
+    border-radius: 5px;
+    transition: all 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.sidebar .nav-link i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Main content düzenlemeleri */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    min-height: 100vh;
+}
+
+/* Header düzenlemeleri */
+.header {
+    background-color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.header h2 {
+    flex: 1;
+    min-width: 200px;
+    margin-bottom: 0;
+}
+
+.header .user-info {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    max-width: 500px;
+    min-width: 250px;
+}
+
+.search-container input {
+    padding-right: 40px;
+    border-radius: 20px;
+    width: 100%;
+}
+
+.search-container i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+/* Kart düzenlemeleri */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    padding: 15px 20px;
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.125);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Stats kartları düzenlemeleri */
+.stats-card {
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+}
+
+.stats-card i {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.stats-card .number {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.stats-card .label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Tablo düzenlemeleri */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.badge-low {
+    background-color: var(--accent-color);
+}
+
+.badge-medium {
+    background-color: var(--warning-color);
+}
+
+.badge-high {
+    background-color: var(--success-color);
+}
+
+.action-btn {
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 2px;
+    cursor: pointer;
+}
+
+.btn-edit {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.btn-delete {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-sell {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Depo haritası düzenlemeleri */
+.map-container {
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: auto;
+    padding: 15px;
+}
+
+.warehouse-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.warehouse-cell {
+    height: 50px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.7rem;
+    text-align: center;
+    word-break: break-all;
+    padding: 2px;
+}
+
+.warehouse-cell:hover {
+    background-color: #dee2e6;
+}
+
+.warehouse-cell.occupied {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.warehouse-cell.low-stock {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* Gelişmiş arama düzenlemeleri */
+.advanced-search {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+/* Bölüm görünürlüğü */
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+/* Barkod tarayıcı düzenlemeleri */
+.barcode-scanner {
+    width: 100%;
+    height: 300px;
+    background-color: #333;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 20px;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Boş durum göstergesi */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #dee2e6;
+}
+
+/* Rapor kontrolleri */
+.report-controls {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Satış öğeleri */
+.sale-item {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.sale-item:last-child {
+    border-bottom: none;
+}
+
+/* Kullanıcı avatarı */
+.avatar {
+    background-color: var(--accent-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Form kontrolleri */
+.form-control, .form-select {
+    border-radius: 5px;
+}
+
+/* Modal düzenlemeleri */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 15px 20px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 15px 20px;
+}
+
+/* Responsive düzenlemeler */
+@media (max-width: 1199.98px) {
+    .warehouse-grid {
+        grid-template-columns: repeat(8, 1fr);
+    }
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .warehouse-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .search-container {
+        max-width: 100%;
+        width: 100%;
+    }
+    
+    .user-info {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+    
+    .warehouse-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+    }
+    
+    .warehouse-cell {
+        height: 40px;
+        font-size: 0.6rem;
+    }
+    
+    .stats-card {
+        padding: 15px;
+    }
+    
+    .stats-card .number {
+        font-size: 1.5rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .product-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .advanced-search, .report-controls {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .main-content {
+        padding: 10px;
+    }
+    
+    .header {
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    .header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .card {
+        border-radius: 8px;
+    }
+    
+    .card-body {
+        padding: 10px;
+    }
+    
+    .warehouse-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .warehouse-cell {
+        height: 35px;
+        font-size: 0.55rem;
+    }
+    
+    .stats-card {
+        padding: 10px;
+    }
+    
+    .stats-card i {
+        font-size: 1.5rem;
+    }
+    
+    .stats-card .number {
+        font-size: 1.3rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .product-image {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .action-btn {
+        padding: 4px 8px;
+        margin: 1px;
+    }
+    
+    .modal-dialog {
+        margin: 10px;
+    }
+}
+
+/* Mobil menü butonu */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1100;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+@media (max-width: 991.98px) {
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Overlay (mobil menü açıkken) */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}

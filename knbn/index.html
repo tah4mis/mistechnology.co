@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gelişmiş Kanban Pano</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Kanban Pano</h1>
+            <div class="brand-info">mistechnology.co üründür</div>
+            <div class="controls">
+                <button id="addColumnBtn" class="btn">Sütun Ekle</button>
+                <button id="addTaskBtn" class="btn">Görev Ekle</button>
+                <button id="addRoadmapItemBtn" class="btn">Yol Haritası Öğesi Ekle</button>
+                <button id="logoutBtn" class="btn btn-danger">Çıkış Yap</button>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="stats-panel">
+                <h2>Proje İstatistikleri</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Toplam Görev</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completedTasks">0</div>
+                        <div class="stat-label">Tamamlanan</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="inProgressTasks">0</div>
+                        <div class="stat-label">Devam Eden</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="plannedTasks">0</div>
+                        <div class="stat-label">Planlanan</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="roadmap-panel">
+                <div class="roadmap-header">
+                    <h2>Yol Haritası</h2>
+                    <button id="editRoadmapBtn" class="btn">Düzenle</button>
+                </div>
+                <div class="roadmap-items" id="roadmapItems">
+                    <!-- Yol haritası öğeleri buraya eklenecek -->
+                </div>
+            </div>
+        </div>
+
+        <div class="features-panel">
+            <h2>Proje Özellikleri</h2>
+            <div class="feature-cards">
+                <div class="feature-card" data-feature="planning">
+                    <div class="feature-icon">📋</div>
+                    <div>Planlama</div>
+                </div>
+                <div class="feature-card" data-feature="sprint">
+                    <div class="feature-icon">🚀</div>
+                    <div>Sprint Yönetimi</div>
+                </div>
+                <div class="feature-card" data-feature="kanban">
+                    <div class="feature-icon">📊</div>
+                    <div>Kanban</div>
+                </div>
+                <div class="feature-card" data-feature="bugs">
+                    <div class="feature-icon">🐛</div>
+                    <div>Hata İzleme</div>
+                </div>
+                <div class="feature-card" data-feature="releases">
+                    <div class="feature-icon">📅</div>
+                    <div>Yayın Planlama</div>
+                </div>
+                <div class="feature-card" data-feature="backlog">
+                    <div class="feature-icon">📈</div>
+                    <div>Özellik Birikimi</div>
+                </div>
+            </div>
+
+            <!-- Planlama İçeriği -->
+            <div class="feature-content" id="planning-content">
+                <h3>Planlama</h3>
+                <p>Proje planlaması ve görev dağılımı</p>
+                <div class="form-group">
+                    <label for="projectTimeline">Proje Zaman Çizelgesi</label>
+                    <input type="text" id="projectTimeline" placeholder="Proje zaman çizelgesi">
+                </div>
+                <div class="form-group">
+                    <label for="resourceAllocation">Kaynak Dağılımı</label>
+                    <textarea id="resourceAllocation" placeholder="Kaynak dağılım detayları"></textarea>
+                </div>
+                <button class="btn">Planı Kaydet</button>
+            </div>
+
+            <!-- Sprint Yönetimi İçeriği -->
+            <div class="feature-content" id="sprint-content">
+                <h3>Sprint Yönetimi</h3>
+                <div class="form-group">
+                    <label for="sprintName">Sprint Adı</label>
+                    <input type="text" id="sprintName" placeholder="Sprint adı">
+                </div>
+                <div class="form-group">
+                    <label for="sprintDuration">Sprint Süresi (gün)</label>
+                    <input type="number" id="sprintDuration" value="14">
+                </div>
+                <button class="btn" id="createSprintBtn">Sprint Oluştur</button>
+                
+                <div class="sprint-list" id="sprintList">
+                    <!-- Sprintler buraya eklenecek -->
+                </div>
+            </div>
+
+            <!-- Kanban İçeriği -->
+            <div class="feature-content" id="kanban-content">
+                <h3>Kanban Panosu</h3>
+                <p>Görevleri sürükle bırak yöntemiyle yönetin</p>
+                <div class="kanban-board" id="kanbanBoard">
+                    <!-- Sütunlar JavaScript ile eklenecek -->
+                </div>
+            </div>
+
+            <!-- Hata İzleme İçeriği -->
+            <div class="feature-content" id="bugs-content">
+                <h3>Hata İzleme</h3>
+                <div class="form-group">
+                    <label for="bugTitle">Hata Başlığı</label>
+                    <input type="text" id="bugTitle" placeholder="Hata başlığı">
+                </div>
+                <div class="form-group">
+                    <label for="bugDescription">Hata Açıklaması</label>
+                    <textarea id="bugDescription" placeholder="Hata detayları"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="bugSeverity">Önem Derecesi</label>
+                    <select id="bugSeverity">
+                        <option value="low">Düşük</option>
+                        <option value="medium">Orta</option>
+                        <option value="high">Yüksek</option>
+                        <option value="critical">Kritik</option>
+                    </select>
+                </div>
+                <button class="btn" id="addBugBtn">Hata Ekle</button>
+                
+                <div class="bug-list" id="bugList">
+                    <!-- Hatalar buraya eklenecek -->
+                </div>
+            </div>
+
+            <!-- Yayın Planlama İçeriği -->
+            <div class="feature-content" id="releases-content">
+                <h3>Yayın Planlama</h3>
+                <div class="form-group">
+                    <label for="releaseName">Yayın Adı</label>
+                    <input type="text" id="releaseName" placeholder="Yayın adı">
+                </div>
+                <div class="form-group">
+                    <label for="releaseDate">Yayın Tarihi</label>
+                    <input type="date" id="releaseDate">
+                </div>
+                <button class="btn" id="addReleaseBtn">Yayın Ekle</button>
+                
+                <div class="release-list" id="releaseList">
+                    <!-- Yayınlar buraya eklenecek -->
+                </div>
+            </div>
+
+            <!-- Özellik Birikimi İçeriği -->
+            <div class="feature-content" id="backlog-content">
+                <h3>Özellik Birikimi</h3>
+                <div class="form-group">
+                    <label for="featureTitle">Özellik Başlığı</label>
+                    <input type="text" id="featureTitle" placeholder="Özellik başlığı">
+                </div>
+                <div class="form-group">
+                    <label for="featureDescription">Özellik Açıklaması</label>
+                    <textarea id="featureDescription" placeholder="Özellik detayları"></textarea>
+                </div>
+                <button class="btn" id="addFeatureBtn">Özellik Ekle</button>
+                
+                <div class="feature-backlog" id="featureBacklog">
+                    <!-- Özellikler buraya eklenecek -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pencereler -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yeni Görev Ekle</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Görev Başlığı</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Açıklama</label>
+                    <textarea id="taskDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Öncelik</label>
+                    <select id="taskPriority">
+                        <option value="low">Düşük</option>
+                        <option value="medium">Orta</option>
+                        <option value="high">Yüksek</option>
+                        <option value="critical">Kritik</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskColumn">Sütun</label>
+                    <select id="taskColumn"></select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDeadline">Son Tarih</label>
+                    <input type="date" id="taskDeadline">
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelTaskBtn" class="btn btn-danger">İptal</button>
+                    <button type="submit" class="btn">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="columnModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yeni Sütun Ekle</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="columnForm">
+                <div class="form-group">
+                    <label for="columnTitle">Sütun Adı</label>
+                    <input type="text" id="columnTitle" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelColumnBtn" class="btn btn-danger">İptal</button>
+                    <button type="submit" class="btn">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="roadmapModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yol Haritası Öğesi Ekle</h2>
+                <span class="close">&times;</span>
+            </div>
+            <form id="roadmapForm">
+                <div class="form-group">
+                    <label for="roadmapTitle">Öğe Başlığı</label>
+                    <input type="text" id="roadmapTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="roadmapDescription">Açıklama</label>
+                    <textarea id="roadmapDescription"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="roadmapStatus">Durum</label>
+                    <select id="roadmapStatus">
+                        <option value="planned">Planlandı</option>
+                        <option value="inprogress">Devam Ediyor</option>
+                        <option value="completed">Tamamlandı</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelRoadmapBtn" class="btn btn-danger">İptal</button>
+                    <button type="submit" class="btn">Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

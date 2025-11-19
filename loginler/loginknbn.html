@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Pano - Giriş</title>
+    <link rel="icon" type="image/png" href="mis.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-left {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 60px 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-left h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .login-left .brand-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .login-left .brand-subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .login-left p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .login-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .login-features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+        }
+
+        .login-features li i {
+            margin-right: 10px;
+            color: var(--success-color);
+            font-size: 1.2rem;
+        }
+
+        .login-right {
+            padding: 60px 40px;
+            flex: 1;
+        }
+
+        .login-right h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .login-right .subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border-right: none;
+        }
+
+        .form-control {
+            border-left: none;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: var(--secondary-color);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .demo-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .demo-info h6 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .demo-info p {
+            color: #856404;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+
+        .demo-info strong {
+            color: #664d03;
+        }
+
+        .alert-login {
+            display: none;
+            margin-top: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px 15px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: white;
+            transition: background 0.3s;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-item i {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            display: block;
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                flex-direction: column;
+            }
+
+            .login-left, .login-right {
+                padding: 40px 30px;
+            }
+
+            .login-left h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .login-left .brand-subtitle {
+                text-align: center;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-left">
+            <h1>
+                <img src="mis.png" alt="Kanban Pano Logo" class="brand-logo">
+                Kanban Pano
+            </h1>
+            <div class="brand-subtitle">mistechnology.co ürünüdür</div>
+            <p>Gelişmiş proje yönetimi ve iş akışı görselleştirme aracı.</p>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i class="fas fa-columns"></i>
+                    <span>Görsel Pano</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-tasks"></i>
+                    <span>Görev Yönetimi</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-rocket"></i>
+                    <span>Sprint Planlama</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-bug"></i>
+                    <span>Hata İzleme</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Raporlama & Analiz</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Takım İşbirliği</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="login-right">
+            <h2>Hoş Geldiniz</h2>
+            <p class="subtitle">Devam etmek için giriş yapın</p>
+            
+            <div class="alert alert-danger alert-login" id="errorAlert" role="alert">
+                <i class="fas fa-exclamation-circle"></i> <span id="errorMessage"></span>
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label">Kullanıcı Adı</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control" id="username" placeholder="Kullanıcı adınızı girin" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Şifre</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Şifrenizi girin" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Beni Hatırla</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-login w-100" id="loginBtn">
+                    <i class="fas fa-sign-in-alt me-2"></i> Giriş Yap
+                </button>
+                
+                <div class="loading mt-3" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Giriş yapılıyor...</p>
+                </div>
+            </form>
+            
+            <div class="demo-info">
+                <h6><i class="fas fa-info-circle"></i> Demo Hesap Bilgileri</h6>
+                <hr style="margin: 10px 0; opacity: 0.3;">
+                <p><strong>Kullanıcı Adı:</strong> demo</p>
+                <p><strong>Şifre:</strong> demo123</p>
+                <p class="mb-0 mt-2"><small><i class="fas fa-lightbulb"></i> Herhangi bir kullanıcı adı/şifre ile de giriş yapabilirsiniz</small></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+        const loginBtn = document.getElementById('loginBtn');
+
+        // Sayfa yüklendiğinde otomatik giriş kontrolü
+        window.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            const sessionActive = sessionStorage.getItem('sessionActive');
+            
+            // Eğer kullanıcı oturumu varsa direkt ana sayfaya yönlendir
+            if (loggedInUser || sessionActive) {
+                window.location.href = '../knbn/index.html';
+            }
+        });
+
+        // Login form submit
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Hata mesajını gizle
+            errorAlert.style.display = 'none';
+            
+            // Basit validasyon
+            if (username.length < 3) {
+                showError('Kullanıcı adı en az 3 karakter olmalıdır');
+                return;
+            }
+            
+            if (password.length < 3) {
+                showError('Şifre en az 3 karakter olmalıdır');
+                return;
+            }
+            
+            // Loading göster
+            loading.classList.add('active');
+            loginBtn.disabled = true;
+            
+            // Gerçek uygulamada bu bir API çağrısı olurdu
+            setTimeout(() => {
+                // Demo hesaplar
+                const validAccounts = {
+                    'admin': 'admin123',
+                    'demo': 'demo123'
+                };
+                
+                // Hesap kontrolü (demo için tüm girişlere izin ver)
+                const isValid = validAccounts[username] === password || true;
+                
+                if (isValid) {
+                    // Başarılı giriş
+                    sessionStorage.setItem('sessionActive', 'true');
+                    sessionStorage.setItem('currentUser', username);
+                    sessionStorage.setItem('loginTime', new Date().toISOString());
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('loggedInUser', username);
+                    }
+                    
+                    // Ana sayfaya yönlendir
+                    window.location.href = '../knbn/index.html';
+                } else {
+                    // Hatalı giriş
+                    loading.classList.remove('active');
+                    loginBtn.disabled = false;
+                    showError('Kullanıcı adı veya şifre hatalı!');
+                }
+            }, 1000); // 1 saniye gecikme (gerçekçi giriş simülasyonu)
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'block';
+            
+            // 5 saniye sonra hata mesajını otomatik gizle
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Enter tuşu ile form gönderimi
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginForm.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Kullanıcı adı alanına otomatik focus
+        document.getElementById('username').focus();
+    </script>
+</body>
+</html>

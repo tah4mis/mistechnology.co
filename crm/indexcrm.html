@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Storage CRM Sistemi</title>
+    <link rel="icon" type="image/png" href="mis.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="stylecrm.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="scriptcrm.js"></script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar col-12" id="sidebar">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white">
+                    <div class="d-flex flex-column align-items-center pb-3 mb-md-0 me-md-auto">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none">
+                            <img src="mis.png" alt="CRM Logo" style="height: 40px; margin-right: 10px;" class="d-none d-sm-inline">
+                            <div class="d-none d-sm-flex flex-column">
+                                <span class="fs-5 fw-bold">CRM</span>
+                                <small style="font-size: 0.8rem;">mistechnology ürünüdür</small>
+                            </div>
+                        </a>
+                    </div>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start w-100" id="menu">
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link active" data-section="dashboard">
+                                <i class="fas fa-tachometer-alt"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="customers">
+                                <i class="fas fa-users"></i> <span class="ms-1 d-none d-sm-inline">Müşteriler</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="opportunities">
+                                <i class="fas fa-briefcase"></i> <span class="ms-1 d-none d-sm-inline">Fırsatlar</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="activities">
+                                <i class="fas fa-phone-alt"></i> <span class="ms-1 d-none d-sm-inline">İletişim</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="tasks">
+                                <i class="fas fa-tasks"></i> <span class="ms-1 d-none d-sm-inline">Görevler</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="reports">
+                                <i class="fas fa-chart-bar"></i> <span class="ms-1 d-none d-sm-inline">Raporlar</span>
+                            </a>
+                        </li>
+                        <li class="nav-item w-100">
+                            <a href="#" class="nav-link" data-section="settings">
+                                <i class="fas fa-cog"></i> <span class="ms-1 d-none d-sm-inline">Ayarlar</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content col-12">
+                <!-- Header -->
+                <div class="header">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-link d-md-none me-2" id="sidebar-toggle" type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 id="page-title" class="mb-0">CRM Dashboard</h2>
+                    </div>
+                    <div class="search-container">
+                        <input type="text" class="form-control" id="global-search" placeholder="Müşteri, fırsat veya görev ara...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="user-info d-flex align-items-center">
+                        <div class="me-3 d-none d-md-block" id="current-date">
+                            <!-- Date will be populated by JS -->
+                        </div>
+                        <div class="dropdown">
+                            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: var(--primary-color);">
+                                <div id="userAvatar" class="avatar me-2"></div>
+                                <span id="currentUserDisplay" class="d-none d-sm-inline"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section active">
+                    <!-- Advanced Search -->
+                    <div class="advanced-search">
+                        <h5><i class="fas fa-filter"></i> Gelişmiş Arama</h5>
+                        <div class="row mt-3">
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Müşteri Tipi</label>
+                                <select class="form-select" id="customer-type-filter">
+                                    <option value="">Tüm Müşteriler</option>
+                                    <option value="lead">Potansiyel Müşteri</option>
+                                    <option value="customer">Müşteri</option>
+                                    <option value="partner">İş Ortağı</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Fırsat Durumu</label>
+                                <select class="form-select" id="opportunity-status-filter">
+                                    <option value="">Tümü</option>
+                                    <option value="new">Yeni</option>
+                                    <option value="qualified">Nitelendirilmiş</option>
+                                    <option value="proposal">Teklif</option>
+                                    <option value="negotiation">Müzakere</option>
+                                    <option value="won">Kazanıldı</option>
+                                    <option value="lost">Kaybedildi</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Görev Durumu</label>
+                                <select class="form-select" id="task-status-filter">
+                                    <option value="">Tümü</option>
+                                    <option value="pending">Beklemede</option>
+                                    <option value="in-progress">Devam Ediyor</option>
+                                    <option value="completed">Tamamlandı</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Tarih Aralığı</label>
+                                <select class="form-select" id="date-range-filter">
+                                    <option value="">Tüm Tarihler</option>
+                                    <option value="today">Bugün</option>
+                                    <option value="week">Bu Hafta</option>
+                                    <option value="month">Bu Ay</option>
+                                    <option value="quarter">Bu Çeyrek</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" id="search-btn"><i class="fas fa-search"></i> Ara</button>
+                            <button class="btn btn-outline-secondary" id="reset-btn"><i class="fas fa-redo"></i> Sıfırla</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="row" id="stats-cards">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Recent Customers Table -->
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-list"></i> Son Eklenen Müşteriler</h5>
+                            <button class="btn btn-primary btn-sm" id="add-customer-btn"><i class="fas fa-plus"></i> Yeni Müşteri Ekle</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Görsel</th>
+                                            <th>Müşteri Adı</th>
+                                            <th>E-posta</th>
+                                            <th>Telefon</th>
+                                            <th>Tip</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="customers-table-body">
+                                        <!-- Customers will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-customers" class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h4>Henüz müşteri eklenmemiş</h4>
+                                <p>İlk müşterinizi eklemek için "Yeni Müşteri Ekle" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Upcoming Tasks Preview -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-tasks"></i> Yaklaşan Görevler</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="upcoming-tasks-preview">
+                                <!-- Upcoming tasks will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customers Section -->
+                <div id="customers" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-users"></i> Tüm Müşteriler</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="export-customers-btn"><i class="fas fa-file-export"></i> Dışa Aktar</button>
+                                <button class="btn btn-success btn-sm" id="add-new-customer-btn"><i class="fas fa-plus"></i> Yeni Müşteri Ekle</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Görsel</th>
+                                            <th>Müşteri Adı</th>
+                                            <th>E-posta</th>
+                                            <th>Telefon</th>
+                                            <th>Şirket</th>
+                                            <th>Tip</th>
+                                            <th>Durum</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="all-customers-table-body">
+                                        <!-- All customers will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-all-customers" class="empty-state">
+                                <i class="fas fa-users"></i>
+                                <h4>Henüz müşteri eklenmemiş</h4>
+                                <p>İlk müşterinizi eklemek için "Yeni Müşteri Ekle" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Opportunities Section -->
+                <div id="opportunities" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-briefcase"></i> Satış Fırsatları</h5>
+                            <button class="btn btn-success btn-sm" id="new-opportunity-btn"><i class="fas fa-plus"></i> Yeni Fırsat</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Fırsat Pipeline</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="opportunity-pipeline">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-briefcase"></i>
+                                                    <h4>Henüz fırsat eklenmemiş</h4>
+                                                    <p>İlk fırsatınızı eklemek için "Yeni Fırsat" butonuna tıklayın.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opportunities History -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-history"></i> Fırsat Geçmişi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fırsat No</th>
+                                            <th>Fırsat Adı</th>
+                                            <th>Müşteri</th>
+                                            <th>Tutar</th>
+                                            <th>Durum</th>
+                                            <th>Tarih</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="opportunities-history-table">
+                                        <!-- Opportunities history will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="empty-opportunities" class="empty-state">
+                                <i class="fas fa-briefcase"></i>
+                                <h4>Henüz fırsat eklenmemiş</h4>
+                                <p>İlk fırsatınızı eklemek için "Yeni Fırsat" butonuna tıklayın.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activities Section -->
+                <div id="activities" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-phone-alt"></i> İletişim Geçmişi</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12 col-md-8 mb-3">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">İletişim Kayıtları</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div id="activities-list">
+                                                <div class="empty-state">
+                                                    <i class="fas fa-phone-alt"></i>
+                                                    <h4>Henüz iletişim kaydı yok</h4>
+                                                    <p>İlk iletişim kaydınızı ekleyin</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Yeni İletişim Ekle</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">İletişim Türü</label>
+                                                <select class="form-select" id="activity-type-select">
+                                                    <option value="call">Telefon</option>
+                                                    <option value="email">E-posta</option>
+                                                    <option value="meeting">Toplantı</option>
+                                                    <option value="note">Not</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Müşteri</label>
+                                                <select class="form-select" id="activity-customer-select">
+                                                    <option value="">Müşteri seçin</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tarih</label>
+                                                <input type="datetime-local" class="form-control" id="activity-date">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Notlar</label>
+                                                <textarea class="form-control" id="activity-notes" rows="3"></textarea>
+                                            </div>
+                                            <button class="btn btn-primary w-100" id="add-activity-btn">
+                                                <i class="fas fa-plus"></i> İletişim Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tasks Section -->
+                <div id="tasks" class="section">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-tasks"></i> Görev Yönetimi</h5>
+                            <div>
+                                <button class="btn btn-primary btn-sm" id="refresh-tasks-btn"><i class="fas fa-sync-alt"></i> Yenile</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="task-search" placeholder="Görev ara...">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                    <select class="form-select" id="task-status-filter-full">
+                                        <option value="">Tüm Durumlar</option>
+                                        <option value="pending">Beklemede</option>
+                                        <option value="in-progress">Devam Ediyor</option>
+                                        <option value="completed">Tamamlandı</option>
+                                    </select>
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                    <select class="form-select" id="task-priority-filter">
+                                        <option value="">Tüm Öncelikler</option>
+                                        <option value="low">Düşük</option>
+                                        <option value="medium">Orta</option>
+                                        <option value="high">Yüksek</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-8 mb-3">
+                                    <div id="tasks-list">
+                                        <!-- Tasks will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">Yeni Görev Ekle</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Görev Başlığı</label>
+                                                <input type="text" class="form-control" id="task-title" placeholder="Görev başlığı">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Müşteri</label>
+                                                <select class="form-select" id="task-customer-select">
+                                                    <option value="">Müşteri seçin</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Bitiş Tarihi</label>
+                                                <input type="date" class="form-control" id="task-due-date">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Öncelik</label>
+                                                <select class="form-select" id="task-priority">
+                                                    <option value="low">Düşük</option>
+                                                    <option value="medium" selected>Orta</option>
+                                                    <option value="high">Yüksek</option>
+                                                </select>
+                                            </div>
+                                            <button class="btn btn-primary w-100" id="add-task-btn">
+                                                <i class="fas fa-plus"></i> Görev Ekle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Reports Section -->
+                <div id="reports" class="section">
+                    <!-- Report Controls -->
+                    <div class="report-controls">
+                        <h5><i class="fas fa-cog"></i> Rapor Ayarları</h5>
+                        <div class="row mt-3">
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Rapor Türü</label>
+                                <select class="form-select" id="report-type">
+                                    <option value="customers">Müşteri Raporu</option>
+                                    <option value="opportunities">Fırsat Raporu</option>
+                                    <option value="activities">İletişim Raporu</option>
+                                    <option value="sales">Satış Raporu</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" class="form-control" id="report-start-date">
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Bitiş Tarihi</label>
+                                <input type="date" class="form-control" id="report-end-date">
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-3 mb-3">
+                                <label class="form-label">Format</label>
+                                <select class="form-select" id="report-format">
+                                    <option value="html">HTML</option>
+                                    <option value="pdf">PDF</option>
+                                    <option value="excel">Excel</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-primary" id="generate-report-btn"><i class="fas fa-chart-pie"></i> Rapor Oluştur</button>
+                            <button class="btn btn-success" id="export-report-btn"><i class="fas fa-download"></i> Raporu İndir</button>
+                            <button class="btn btn-outline-info" id="print-report-btn"><i class="fas fa-print"></i> Yazdır</button>
+                        </div>
+                    </div>
+
+                    <!-- Generated Report -->
+                    <div class="card" id="generated-report-container" style="display: none;">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Oluşturulan Rapor</h5>
+                            <span class="badge bg-primary" id="report-date-range"></span>
+                        </div>
+                        <div class="card-body">
+                            <div id="generated-report-content">
+                                <!-- Report content will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts and Reports -->
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Müşteri Dağılımı</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="customerChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Fırsat Durumu</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="opportunityChart" height="250"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Aylık Satış Trendi</h6>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="salesChart" height="100"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12 col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>Yaklaşan Görevler</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Görev</th>
+                                                    <th>Müşteri</th>
+                                                    <th>Bitiş Tarihi</th>
+                                                    <th>Öncelik</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="upcoming-tasks-table">
+                                                <!-- Upcoming tasks will be populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="empty-upcoming-tasks" class="empty-state">
+                                        <i class="fas fa-check-circle"></i>
+                                        <h4>Yaklaşan görev yok</h4>
+                                        <p>Tüm görevler tamamlandı.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>En Değerli Fırsatlar</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Fırsat Adı</th>
+                                                    <th>Müşteri</th>
+                                                    <th>Tutar</th>
+                                                    <th>Durum</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="top-opportunities-table">
+                                                <!-- Top opportunities will be populated by JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="empty-top-opportunities" class="empty-state">
+                                        <i class="fas fa-briefcase"></i>
+                                        <h4>Henüz fırsat eklenmemiş</h4>
+                                        <p>Fırsat değeri hesaplanacak veri bulunamadı.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="settings" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="fas fa-cog"></i> Sistem Ayarları</h5>
+                        </div>
+                        <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6 mb-4">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h6>Genel Ayarlar</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Şirket Adı</label>
+                                            <input type="text" class="form-control" id="company-name" value="ABC CRM Yönetimi">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Para Birimi</label>
+                                            <select class="form-select" id="currency">
+                                                <option>TL - Türk Lirası</option>
+                                                <option>USD - Amerikan Doları</option>
+                                                <option>EUR - Euro</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Varsayılan Bölge</label>
+                                            <select class="form-select" id="default-region">
+                                                <option>Türkiye</option>
+                                                <option>Avrupa</option>
+                                                <option>Asya</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="activityNotification" checked>
+                                            <label class="form-check-label" for="activityNotification">Aktivite bildirimleri gönder</label>
+                                        </div>
+                                        <button class="btn btn-primary" id="save-general-settings">Kaydet</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6>CRM Ayarları</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label">Varsayılan Fırsat Aşaması</label>
+                                            <select class="form-select" id="default-opportunity-stage">
+                                                <option>Yeni</option>
+                                                <option>Nitelendirilmiş</option>
+                                                <option>Teklif</option>
+                                                <option>Müzakere</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Otomatik Görev Hatırlatma</label>
+                                            <select class="form-select" id="auto-task-reminder">
+                                                <option>Kapalı</option>
+                                                <option>1 Gün Önce</option>
+                                                <option>2 Gün Önce</option>
+                                                <option>1 Hafta Önce</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="autoFollowUp" checked>
+                                            <label class="form-check-label" for="autoFollowUp">Otomatik takip oluştur</label>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Rapor Otomasyonu</label>
+                                            <select class="form-select" id="report-automation">
+                                                <option>Kapalı</option>
+                                                <option>Günlük</option>
+                                                <option>Haftalık</option>
+                                                <option>Aylık</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-primary" id="save-crm-settings">Kaydet</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h6>Veri Yönetimi</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label class="form-label">Veri Yedekleme</label>
+                                                <div>
+                                                    <button class="btn btn-outline-primary me-2" id="backup-data-btn"><i class="fas fa-download"></i> Yedek Al</button>
+                                                    <button class="btn btn-outline-secondary" id="restore-data-btn"><i class="fas fa-upload"></i> Yedekten Yükle</button>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Veri Temizleme</label>
+                                                <div>
+                                                    <button class="btn btn-outline-danger me-2" id="clear-temp-btn"><i class="fas fa-trash"></i> Geçici Dosyaları Temizle</button>
+                                                    <button class="btn btn-outline-warning" id="clear-cache-btn"><i class="fas fa-eraser"></i> Önbelleği Temizle</button>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Sistem Bilgileri</label>
+                                                <div class="bg-light p-2 rounded" id="system-info">
+                                                    <!-- System info will be populated by JavaScript -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h6>Veritabanı İşlemleri</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <p>Bu işlemler local storage'daki tüm verileri silecektir. Geri alınamaz!</p>
+                                                <button class="btn btn-danger w-100" id="reset-all-data-btn"><i class="fas fa-exclamation-triangle"></i> Tüm Verileri Sıfırla</button>
+                                            </div>
+                                            <div class="mb-3">
+                                                <p>Örnek verilerle sistemi test edin:</p>
+                                                <button class="btn btn-outline-info w-100" id="load-sample-data-btn"><i class="fas fa-vial"></i> Örnek Verileri Yükle</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customer-modal-title">Yeni Müşteri Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-customer-form">
+                        <input type="hidden" id="customer-id">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Müşteri Adı *</label>
+                                    <input type="text" class="form-control" id="customer-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">E-posta *</label>
+                                    <input type="email" class="form-control" id="customer-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telefon</label>
+                                    <input type="tel" class="form-control" id="customer-phone">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Müşteri Tipi</label>
+                                    <select class="form-select" id="customer-type">
+                                        <option value="lead">Potansiyel Müşteri</option>
+                                        <option value="customer" selected>Müşteri</option>
+                                        <option value="partner">İş Ortağı</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Durum</label>
+                                    <select class="form-select" id="customer-status">
+                                        <option value="active" selected>Aktif</option>
+                                        <option value="inactive">Pasif</option>
+                                        <option value="blocked">Engellenmiş</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Şirket Adı</label>
+                                    <input type="text" class="form-control" id="customer-company">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Pozisyon</label>
+                                    <input type="text" class="form-control" id="customer-position">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Adres</label>
+                                    <textarea class="form-control" id="customer-address" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Web Sitesi</label>
+                                    <input type="url" class="form-control" id="customer-website" placeholder="https://...">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Müşteri Görseli URL</label>
+                                    <input type="text" class="form-control" id="customer-image" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notlar</label>
+                            <textarea class="form-control" id="customer-notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="save-customer-btn">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Opportunity Modal -->
+    <div class="modal fade" id="addOpportunityModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Fırsat Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-opportunity-form">
+                        <input type="hidden" id="opportunity-id">
+                        <div class="mb-3">
+                            <label class="form-label">Fırsat Adı *</label>
+                            <input type="text" class="form-control" id="opportunity-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Müşteri *</label>
+                            <select class="form-select" id="opportunity-customer" required>
+                                <option value="">Müşteri seçin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tutar (TL) *</label>
+                            <input type="number" class="form-control" id="opportunity-amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Durum</label>
+                            <select class="form-select" id="opportunity-stage">
+                                <option value="new">Yeni</option>
+                                <option value="qualified">Nitelendirilmiş</option>
+                                <option value="proposal">Teklif</option>
+                                <option value="negotiation">Müzakere</option>
+                                <option value="won">Kazanıldı</option>
+                                <option value="lost">Kaybedildi</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kapanış Tarihi</label>
+                            <input type="date" class="form-control" id="opportunity-close-date">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="opportunity-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-success" id="save-opportunity-btn">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="success-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Başarılı</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="success-toast-body">
+                İşlem başarıyla tamamlandı.
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scriptcrm.js"></script>
+
+    <!-- ÇIKIŞ YÖNETİMİ SCRIPT'İ -->
+    <script>
+        // Sayfa yüklendiğinde kullanıcı bilgisini göster
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (currentUser) {
+                // Kullanıcı adını göster
+                const userDisplay = document.getElementById('currentUserDisplay');
+                if (userDisplay) {
+                    userDisplay.textContent = currentUser;
+                }
+                
+                // Avatar harfini güncelle
+                const userAvatar = document.getElementById('userAvatar');
+                if (userAvatar) {
+                    userAvatar.textContent = currentUser.charAt(0).toUpperCase();
+                }
+                
+                // Header'daki tarih alanını güncelle (kullanıcı bilgisi ekle)
+                const currentDateSpan = document.getElementById('current-date');
+                if (currentDateSpan) {
+                    const loginTime = sessionStorage.getItem('loginTime');
+                    const loginDate = loginTime ? new Date(loginTime) : new Date();
+                    currentDateSpan.innerHTML = `
+                        <small style="margin-right: 10px;">
+                            <i class="fas fa-user-circle"></i> ${currentUser}
+                        </small>
+                        <span>${loginDate.toLocaleDateString('tr-TR')}</span>
+                    `;
+                }
+            } else {
+                // Kullanıcı yoksa login sayfasına yönlendir
+                window.location.href = '../loginler/logincrm.html';
+            }
+        });
+
+        // Çıkış butonu
+        document.getElementById('logoutButton').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Çıkış yapmak istediğinizden emin misiniz?')) {
+                // Oturum bilgilerini temizle
+                sessionStorage.removeItem('sessionActive');
+                sessionStorage.removeItem('currentUser');
+                sessionStorage.removeItem('loginTime');
+                
+                // Eğer "Beni Hatırla" seçiliyse localStorage'daki kullanıcıyı silme
+                // Eğer "Beni Hatırla" seçili değilse, login sırasında localStorage'a hiç kaydedilmez.
+                // Çıkışta sadece sessionStorage'ı temizlemek yeterlidir.
+                // İsteğe bağlı: Eğer "Beni Hatırla" seçeneği olsa bile çıkışta temizlenmesini isterseniz aşağıdaki satırı ekleyin
+                // localStorage.removeItem('loggedInUser');
+                
+                // Login sayfasına yönlendir
+                window.location.href = '../loginler/logincrm.html';
+            }
+        });
+
+        // Otomatik oturum zaman aşımı (30 dakika)
+        let inactivityTimer;
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(() => {
+                alert('Oturumunuz zaman aşımına uğradı. Lütfen tekrar giriş yapın.');
+                sessionStorage.clear();
+                localStorage.removeItem('loggedInUser'); // Güvenlik için
+                window.location.href = 'logincrm.html';
+            }, 30 * 60 * 1000); // 30 dakika = 1800000 ms
+        }
+
+        // Kullanıcı aktivitelerini dinle
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keypress', resetInactivityTimer);
+        document.addEventListener('click', resetInactivityTimer);
+        document.addEventListener('scroll', resetInactivityTimer);
+        document.addEventListener('touchstart', resetInactivityTimer);
+
+        // Timer'ı başlat
+        resetInactivityTimer();
+
+        // Sidebar toggle for mobile
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.createElement('div');
+        sidebarOverlay.className = 'sidebar-overlay';
+        sidebarOverlay.style.cssText = 'display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;';
+        document.body.appendChild(sidebarOverlay);
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('sidebar-open');
+                sidebarOverlay.style.display = sidebar.classList.contains('sidebar-open') ? 'block' : 'none';
+            });
+        }
+
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.remove('sidebar-open');
+            sidebarOverlay.style.display = 'none';
+        });
+
+        // Close sidebar when clicking outside on mobile
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('sidebar-open');
+                sidebarOverlay.style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
+
