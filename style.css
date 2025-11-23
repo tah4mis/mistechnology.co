@@ -16,7 +16,7 @@
 
 .rnd-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     max-width: 1200px;
     margin: 3rem auto 0;
@@ -110,6 +110,12 @@
     border: 1px solid rgba(136, 146, 176, 0.3);
 }
 
+.rnd-status.design {
+    background: rgba(148, 0, 211, 0.2);
+    color: #9400D3;
+    border: 1px solid rgba(148, 0, 211, 0.3);
+}
+
 .rnd-description {
     color: var(--light-text-color);
     font-size: 1rem;
@@ -200,6 +206,10 @@
 
 .progress-fill.planning {
     background: var(--light-text-color);
+}
+
+.progress-fill.design {
+    background: #9400D3;
 }
 
 .progress-text {
