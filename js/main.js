@@ -193,4 +193,61 @@ document.addEventListener('DOMContentLoaded', () => {
             canvas.height = window.innerHeight;
         });
     }
+
+    // Footer'daki hukuki linkler için küçük panel (modal)
+    const legalLinks = document.querySelectorAll('.legal-link');
+    const legalModal = document.getElementById('legal-modal');
+    const legalModalTitle = document.getElementById('legal-modal-title');
+    const legalModalBody = document.getElementById('legal-modal-body');
+    const legalModalClose = document.querySelector('.legal-modal-close');
+    const legalModalBackdrop = legalModal ? legalModal.querySelector('.legal-modal-backdrop') : null;
+
+    const legalTexts = {
+        privacy: {
+            title: 'Gizlilik Politikası',
+            body: 'MisTechnology.co olarak, yalnızca hizmet sunumu için gerekli temel iletişim bilgilerinizi toplarız. Verileriniz üçüncü taraflarla paylaşılmaz, güvenli sunucularda saklanır ve talep etmeniz halinde kalıcı olarak silinir.'
+        },
+        terms: {
+            title: 'Kullanım Koşulları',
+            body: 'Bu web sitesini kullanarak içeriklerin bilgilendirme amaçlı olduğunu, ticari teklif niteliği taşımadığını kabul etmiş olursunuz. Tüm içeriklerin telif hakkı MisTechnology.co\'ya aittir ve izinsiz kopyalanamaz. İçerik veya görsellerin izinsiz kopyalandığının tespiti halinde, her türlü hukuki ve cezai süreç başlatılacağını kabul etmiş olursunuz. Sunulan yazılım çözümleri ve ürünlerin tamamı ilgili mevzuata uygun şekilde korunmakta olup, patent ve benzeri fikri haklarla güvence altındadır.'
+        },
+        kvkk: {
+            title: 'KVKK Aydınlatma Metni',
+            body: 'KVKK kapsamında, paylaştığınız kişisel veriler; yalnızca sizinle iletişime geçmek, teklif ve bilgilendirme sunmak amacıyla işlenir. Veri sorumlusu olarak MisTechnology.co\'ya dilediğiniz zaman başvurarak verilerinize erişme, düzeltme veya silme talebinde bulunabilirsiniz.'
+        }
+    };
+
+    function openLegalModal(type) {
+        if (!legalModal || !legalTexts[type]) return;
+        legalModalTitle.textContent = legalTexts[type].title;
+        legalModalBody.textContent = legalTexts[type].body;
+        legalModal.classList.add('open');
+    }
+
+    function closeLegalModal() {
+        if (!legalModal) return;
+        legalModal.classList.remove('open');
+    }
+
+    legalLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = link.getAttribute('data-legal');
+            openLegalModal(type);
+        });
+    });
+
+    if (legalModalClose) {
+        legalModalClose.addEventListener('click', closeLegalModal);
+    }
+
+    if (legalModalBackdrop) {
+        legalModalBackdrop.addEventListener('click', closeLegalModal);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && legalModal && legalModal.classList.contains('open')) {
+            closeLegalModal();
+        }
+    });
 });
